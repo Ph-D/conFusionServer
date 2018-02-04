@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var passport = require('passport');
-var authenticated = require('./authenticate');
+var authenticate = require('./authenticate');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -50,7 +50,8 @@ app.use(session({
 }));
 
 app.use(passport.initialize());
-app.use(passport.serializeUser());
+app.use(passport.session());
+//app.use(passport.serializeUser());
 
 app.use('/', index);
 app.use('/users', users);
@@ -62,10 +63,10 @@ function auth (req, res, next) {
     var err = new Error('You are not authenticated!');
     err.status = 403;
     return next(err);
-}
-else {
-    next();
-}
+  }
+  else {
+      next();
+  }
 
 }
 app.use(auth);
