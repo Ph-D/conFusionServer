@@ -19,6 +19,18 @@ exports.getToken = function(user) {
         {expiresIn: 3600});
 };
 
+exports.verifyAdmin = function(user,req, res, next){
+    if(req.user.admin == true){
+        next();
+    } else {
+        var err = new Error('You are not admin!');
+        err.status = 403;
+        return next(err);  
+    }
+
+}
+
+
 var opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = config.secretKey;
