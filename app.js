@@ -54,26 +54,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // }));
 
 app.use(passport.initialize());
-// app.use(passport.session());
-//app.use(passport.serializeUser());
+
 
 app.use('/', index);
 app.use('/users', users);
 
-// function auth (req, res, next) {
-//   console.log(req.session);
 
-//   if(!req.user) {
-//     var err = new Error('You are not authenticated!');
-//     err.status = 403;
-//     return next(err);
-//   }
-//   else {
-//       next();
-//   }
 
-// }
-// app.use(auth);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
