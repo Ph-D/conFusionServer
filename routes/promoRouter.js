@@ -6,15 +6,16 @@ const moongoose = require('mongoose');
 const Promotions = require('../models/promotions');
 
 const promoRouter = express.Router();
+const cors = require('./cors');
 
 var authenticate = require('../authenticate');
 
 promoRouter.use(bodyParser.json());
 
 promoRouter.route('/')
-
-    .get((req,res,next) => {
-        Promotions.find({})
+.options(cors.corsWithOptions, (req,res) => { res.sendStatus(200); })
+    .get(cors.cors, (req,res,next) => {
+        Promotions.find(req.query)
         .then((promotions) => {
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
@@ -50,7 +51,8 @@ promoRouter.route('/')
     });
 
 promoRouter.route('/:promoId')
-    .get((req,res,next) => {
+.options(cors.corsWithOptions, (req,res) => { res.sendStatus(200); })
+    .get(cors.cors,(req,res,next) => {
         Promotions.findById(req.params.promoId)
         .then((promotion) => {
             res.statusCode = 200;

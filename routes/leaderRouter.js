@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const Leaders = require('../models/leaders');
+const cors = require('./cors');
 
 const leaderRouter = express.Router();
 var authenticate = require('../authenticate');
@@ -13,9 +14,10 @@ leaderRouter.use(bodyParser.json());
 leaderRouter.route('/')
 
 
+.options(cors.corsWithOptions, (req,res) => { res.sendStatus(200); })
 
-    .get((req,res,next) => {
-        Leaders.find({})
+    .get(cors.cors,(req,res,next) => {
+        Leaders.find(req.query)
         .then((leaders) => {
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
@@ -53,9 +55,11 @@ leaderRouter.route('/')
 
 
 leaderRouter.route('/:leaderId')
-    .get((req,res,next) => {
-        Leaders.findById(req.params.leaderId)
-        .then((leader) => {
+.options(cors.corsWithOptions, (req,res) => { res.sendStatus(200); })
+
+    .get(cors.cors,(req,res,next) => {
+        Leaders.find(req.query)
+        .then((leaders) => {
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
             res.json(leader);

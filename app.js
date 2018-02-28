@@ -16,6 +16,7 @@ var promoRouter = require('./routes/promoRouter');
 var leaderRouter = require('./routes/leaderRouter');
 var uploadRouter = require('./routes/uploadRouter');
 var favoriteRouter = require('./routes/favoriteRouter');
+const cors = require('cors');
 
 var config = require('./config');
 
@@ -65,7 +66,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // }));
 
 app.use(passport.initialize());
-
+app.use(cors());
 
 app.use('/', index);
 app.use('/users', users);
