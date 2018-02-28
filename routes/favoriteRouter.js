@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const Favorite = require('../models/favorite');
 const favoriteRouter = express.Router();
 const authenticate = require('../authenticate');
+const cors = require('./cors');
 
 favoriteRouter.use(bodyParser.json());
 
@@ -90,6 +91,31 @@ favoriteRouter.route('/')
 /////////:dishId
 
 favoriteRouter.route('/:dishId')
+.get(cors.cors, authenticate.verifyUser, (req,res,next) => {
+    Favorite.findOne({user: req.user._id})
+    .then((favorite) => {
+        if (!favorites) {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            return res.json({"exists": false, "favorites": favorites});
+        }
+        else {
+            if (favorite.dishes.indexOf(req.params.dishId) < 0) {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                return res.json({"exists": false, "favorites": favorites});
+            }
+            else {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                return res.json({"exists": true, "favorites": favorites});
+            }
+        }
+
+    }, (err) => next(err))
+    .catch((err) => next(err))
+})
+
 .post(authenticate.verifyUser, (req, res, next) => {
     Favorite.findOne({
         'user': req.user._id
@@ -143,9 +169,15 @@ favoriteRouter.route('/:dishId')
         }
         favorite.save()
         .then((favorite) => {
-            res.statusCode = 200;
-            res.setHeader('Content-Type', 'application/json');
-            res.json(favorite);                
+            Favorite.findById(favorite._id)
+            .populate('user')
+            .populate('dishes')
+            .then((favorite) => {
+                console.log('Favorite Dish Deleted!', favorite);
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(favorite);   
+            })        
         }, (err) => next(err))
         .catch((err) => next(err));
     })
